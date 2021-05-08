@@ -94,7 +94,7 @@ Currently, it supports the detection of the following refactorings:
 62. Change Method Access Modifier
 
 # Python Support
-Python support has been addeed to the RefactoringMiner
+Python support has been addeed to the RefactoringMiner.
 More information can be expected soon. 
 
 
