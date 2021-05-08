@@ -1,6 +1,6 @@
 Table of Contents
 =================
-
+   * [Python Support](#python-support)
    * [General info](#general-info)
    * [How to build RefactoringMiner](#how-to-build-refactoringminer)
    * [How to use RefactoringMiner as a maven dependency](#how-to-use-refactoringminer-as-a-maven-dependency)
@@ -92,6 +92,12 @@ Currently, it supports the detection of the following refactorings:
 60. Remove Thrown Exception Type
 61. Change Thrown Exception Type
 62. Change Method Access Modifier
+
+# Python Support
+Python support has been addeed to the RefactoringMiner
+More information can be expected soon. 
+
+
 
 # How to build RefactoringMiner
 
