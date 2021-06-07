@@ -1,4 +1,10 @@
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.maldil/python-refactoring-miner/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.maldil/python-refactoring-miner/arithmetic)
+Maven latest release information : [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.maldil/python-refactoring-miner/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.maldil/python-refactoring-miner)
+
+
+
+
+
+
 =======
 Table of Contents
 =================
