@@ -13,7 +13,7 @@ import json
 import os
 import subprocess
 import shutil
-pytype_out_path = '/Users/malinda/Documents/Research_Topic_2/CPatMiner/AtomicASTChangeMining/pytype_output/.pytype/'
+pytype_out_path = '/pytype_output/.pytype/'
 
 def annotate(source,file_name):
   source = textwrap.dedent(source.lstrip('\n'))
@@ -59,13 +59,11 @@ def get_ast(options):
 def main1():
   if len(sys.argv)>1:
     file_path = sys.argv[1]
-  else:
-    file_path = '/Users/malinda/Documents/Research_Topic_2/DATA_FOR_CPATMiner/django-debug-toolbar/tests/settings.py'
+
 
   if len(sys.argv)>2:
     project_name = sys.argv[2]
-  else:
-    project_name = '/Users/malinda/Documents/Research_Topic_2/DATA_FOR_CPATMiner/django-debug-toolbar'
+
 
   if len(sys.argv)>3:
     file_name = sys.argv[3]

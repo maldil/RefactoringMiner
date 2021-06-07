@@ -39,9 +39,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
-public class TestJava {
+public class TestPython {
     public static void main(String[] args) throws Exception {
-        String content = readStringFromFile("/Users/malinda/Documents/Research_Topic_2/RMiner_Maven/selected-repos.csv");
+        String content = readStringFromFile("selected-repos.csv");
         assert content != null;
         Scanner sc = new Scanner(content);
         while (sc.hasNextLine()) {
@@ -76,7 +76,7 @@ public class TestJava {
 
         List<String> lists = readExistingRefactoringDetections();
 
-        CSVWriter writer = new CSVWriter(new FileWriter("generations/refactorings.csv",true));
+        CSVWriter writer = new CSVWriter(new FileWriter("../generations/refactorings.csv",true));
 
         List<String> commits= getCommitsForAnalysis(repo,projectName);
 
@@ -224,7 +224,7 @@ public class TestJava {
 
     public static List<String> readExistingRefactoringDetections(){
         List<String> records = new ArrayList<>();
-        try (CSVReader csvReader = new CSVReader(new FileReader("generations/refactorings.csv"));) {
+        try (CSVReader csvReader = new CSVReader(new FileReader("../generations/refactorings.csv"));) {
             String[] values = null;
             while ((values = csvReader.readNext()) != null) {
                 records.add(values[5]);

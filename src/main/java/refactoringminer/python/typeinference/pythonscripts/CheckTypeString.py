@@ -7,7 +7,7 @@ import textwrap
 from pytype import config
 from pytype.tools.annotate_ast import annotate_ast
 
-pytype_out_path = '/Users/malinda/Documents/Research_Topic_2/CPatMiner/AtomicASTChangeMining/pytype_output/.pytype/'
+pytype_out_path = '/pytype_output/.pytype/'
 
 def annotate(source,file_name):
     source = textwrap.dedent(source.lstrip('\n'))

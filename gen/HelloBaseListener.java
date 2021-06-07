@@ -1,4 +1,4 @@
-// Generated from /Users/malinda/Documents/Research_Topic_2/RMiner_Maven/tmp1/antlr4/antlr4-maven-plugin/src/test/projects/importsStandard/src/main/antlr4/test/Hello.g4 by ANTLR 4.8
+// Generated from /Users/user/Documents/Research_Topic_2/RMiner_Maven/tmp1/antlr4/antlr4-maven-plugin/src/test/projects/importsStandard/src/main/antlr4/test/Hello.g4 by ANTLR 4.8
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;

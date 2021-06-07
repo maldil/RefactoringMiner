@@ -1,4 +1,3 @@
-// Generated from /Users/malinda/Documents/Research_Topic_2/RMiner_Maven/tmp1/antlr4/antlr4-maven-plugin/src/test/projects/importsStandard/src/main/antlr4/imports/TestBaseLexer2.g4 by ANTLR 4.8
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
