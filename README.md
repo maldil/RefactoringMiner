@@ -43,7 +43,7 @@ In order to use RefactoringMiner as a maven dependency in your project, add the 
 	</dependency>
 
 # How to build RefactoringMiner
-Building RefactoringMiner could slidly complex due to Eclips-JDT paser. You have to build the Eclips-JDT paser (link) locally and install it to local Maven repository before building RefactoringMiner. 
+Building RefactoringMiner could be slidly complex due to Eclips-JDT paser. You have to build the Eclips-JDT paser (link) locally and install it to the local Maven repository before building RefactoringMiner. 
 
 # Research
 ## How to cite RefactoringMiner
@@ -86,7 +86,7 @@ The code in package **gr.uom.java.xmi.*** is developed by [Nikolaos Tsantalis](h
 
 The code in package **org.refactoringminer.*** was initially developed by [Danilo Ferreira e Silva](https://github.com/danilofes) and later extended by [Nikolaos Tsantalis](https://github.com/tsantalis).
 
-Python extention of RefactoringMiner is done by MalDil.
+Python extention of RefactoringMiner is developed by MalDil.
 
 # API usage guidelines
 ## With a locally cloned git repository
