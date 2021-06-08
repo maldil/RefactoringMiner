@@ -36,11 +36,11 @@ In order to use RefactoringMiner as a maven dependency in your project, add the 
 Since version 2.0, RefactoringMiner is available in the [Maven Central Repository](https://mvnrepository.com/artifact/com.github.tsantalis/refactoring-miner).
 In order to use RefactoringMiner as a maven dependency in your project, add the following snippet to your project's build configuration file:
 
-<dependency>
-    <groupId>io.github.maldil</groupId>
-    <artifactId>python-refactoring-miner</artifactId>
-    <version>1.0.2</version>
-</dependency>
+	<dependency>
+	    <groupId>io.github.maldil</groupId>
+	    <artifactId>python-refactoring-miner</artifactId>
+	    <version>1.0.2</version>
+	</dependency>
 
 # How to build RefactoringMiner
 Building RefactoringMiner could slidly complex due to Eclips-JDT paser. You have to build the Eclips-JDT paser (link) locally and install it to local Maven repository before building RefactoringMiner. 
