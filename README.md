@@ -1,9 +1,3 @@
-Maven latest release information : [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.maldil/python-refactoring-miner/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.maldil/python-refactoring-miner)
-
-
-
-
-
 
 Table of Contents
 =================
@@ -30,6 +24,7 @@ Technically, it should support all the refactoring detected by the original Refa
 
 
 # How to use RefactoringMiner as a maven dependency
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.maldil/python-refactoring-miner/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.maldil/python-refactoring-miner)
 Python-adapted RefactoringMiner is available in the [Maven Central Repository](https://mvnrepository.com/artifact/io.github.maldil/python-refactoring-miner).
 In order to use RefactoringMiner as a maven dependency in your project, add the following snippet to your project's build configuration file:
 
