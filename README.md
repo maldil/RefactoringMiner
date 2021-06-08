@@ -29,14 +29,6 @@ Table of Contents
 Technically, it should support all the refactoring detected by the original RefacotringMiner (please refer [this](https://github.com/tsantalis/RefactoringMiner#general-info)). However, we manually valiaded only 19 kinds of refacotrings. All the validation results are available in our [website](https://mledits.github.io).
 
 
-
-# How to build RefactoringMiner
-
-In order to build the project, run `./gradlew jar` (or `gradlew jar`, in Windows) in the project's root directory.
-Alternatively, you can generate a complete distribution zip including all runtime dependencies running `./gradlew distZip`.
-
-You can also work with the project with Eclipse IDE. First, run `./gradlew eclipse` to generate Eclipse project metadata files. Then, import it into Eclipse using the *Import Existing Project* feature.
-
 # How to use RefactoringMiner as a maven dependency
 Python extention of RefactoringMiner is available in the [Maven Central Repository](https://mvnrepository.com/artifact/io.github.maldil/python-refactoring-miner).
 In order to use RefactoringMiner as a maven dependency in your project, add the following snippet to your project's build configuration file:
@@ -49,6 +41,9 @@ In order to use RefactoringMiner as a maven dependency in your project, add the 
     <artifactId>python-refactoring-miner</artifactId>
     <version>1.0.2</version>
 </dependency>
+
+# How to build RefactoringMiner
+Building RefactoringMiner could slidly complex due to Eclips-JDT paser. You have to build the Eclips-JDT paser (link) locally and install it to local Maven repository before building RefactoringMiner. 
 
 # Research
 ## How to cite RefactoringMiner
