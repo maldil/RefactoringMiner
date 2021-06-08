@@ -30,10 +30,7 @@ Technically, it should support all the refactoring detected by the original Refa
 
 
 # How to use RefactoringMiner as a maven dependency
-Python extention of RefactoringMiner is available in the [Maven Central Repository](https://mvnrepository.com/artifact/io.github.maldil/python-refactoring-miner).
-In order to use RefactoringMiner as a maven dependency in your project, add the following snippet to your project's build configuration file:
-
-Since version 2.0, RefactoringMiner is available in the [Maven Central Repository](https://mvnrepository.com/artifact/com.github.tsantalis/refactoring-miner).
+Python-adapted RefactoringMiner is available in the [Maven Central Repository](https://mvnrepository.com/artifact/io.github.maldil/python-refactoring-miner).
 In order to use RefactoringMiner as a maven dependency in your project, add the following snippet to your project's build configuration file:
 
 	<dependency>
