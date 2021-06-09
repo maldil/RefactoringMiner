@@ -75,12 +75,14 @@ The code in package **org.refactoringminer.*** was initially developed by [Danil
 Python extention of RefactoringMiner is developed by MalDil.
 
 # API usage guidelines
+Please note that Python-adapted RefactoringMiner uses Type inference to infer type information of program elements. We have already inferred the Type information of 1000 projects (for each commit) and uploaded it to [https://github.com/maldil/PythonTypeInformation](https://github.com/maldil/PythonTypeInformation). Please download the repository and update the variable `Configuration.PROJECT_REPO` with the Path to the repository. If the repository doesn't already have the Type Information of your project, you may use the steps mentioned in the [repository](https://github.com/maldil/PythonTypeInformation]) to infer type information. 
 ## With a locally cloned git repository
 RefactoringMiner can automatically detect refactorings in the entire history of 
 git repositories, between specified commits or tags, or at specified commits.
 
 In the code snippet below we demonstrate how to print all refactorings performed
 in the project NLTK https://github.com/nltk/nltk.
+
 
 ```java
         GitService gitService = new GitServiceImpl();
@@ -100,7 +102,7 @@ in the project NLTK https://github.com/nltk/nltk.
                 }
             }
         });
-    }
+    
 ```
 
 You can also analyze between commits using `detectBetweenCommits` or between tags using `detectBetweenTags`. RefactoringMiner will iterate through all *non-merge* commits from **start** commit/tag to **end** commit/tag.
