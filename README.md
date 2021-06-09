@@ -75,7 +75,7 @@ The code in package **org.refactoringminer.*** was initially developed by [Danil
 Python extention of RefactoringMiner is developed by MalDil.
 
 # API usage guidelines
-Please note that Python-adapted RefactoringMiner uses Type inference to infer type information of program elements. We have already inferred the Type information of 1000 projects (for each commit) and uploaded it to [https://github.com/maldil/PythonTypeInformation](https://github.com/maldil/PythonTypeInformation). Please download the repository and update the variable `Configuration.PROJECT_REPO` with the Path to the repository. If the repository doesn't already have the Type Information of your project, you may use the steps mentioned in the [repository](https://github.com/maldil/PythonTypeInformation]) to infer type information. 
+Please note that Python-adapted RefactoringMiner uses Type inference to infer type information of Python program elements. We have already inferred the Type information of 1000 Python projects (for each commit) and uploaded it to [https://github.com/maldil/PythonTypeInformation](https://github.com/maldil/PythonTypeInformation). Please download the repository and update the variable `Configuration.TYPE_REPOSITORY` with the Path to the repository. If the repository doesn't already have the Type information of your project, you may use the steps mentioned in the [repository](https://github.com/maldil/PythonTypeInformation]) to infer type information. 
 ## With a locally cloned git repository
 RefactoringMiner can automatically detect refactorings in the entire history of 
 git repositories, between specified commits or tags, or at specified commits.
