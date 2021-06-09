@@ -29,7 +29,7 @@ In order to use RefactoringMiner as a maven dependency in your project, add the 
 	</dependency>
 
 # How to build RefactoringMiner
-Building RefactoringMiner could be slidly complex due to Eclips-JDT paser. You have to build the Eclips-JDT paser (link) locally and install it to the local Maven repository before building RefactoringMiner. 
+Building RefactoringMiner could be slidly complex due to Eclips-JDT paser. You have to build the Eclips-JDT paser ([https://github.com/maldil/PyEclipsJDTParser](https://github.com/maldil/PyEclipsJDTParser)) locally and install it to the local Maven repository before building RefactoringMiner. 
 
 # Research
 ## How to cite RefactoringMiner
