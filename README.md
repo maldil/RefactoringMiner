@@ -12,12 +12,12 @@ Table of Contents
    * [Location information for the detected refactorings](#location-information-for-the-detected-refactorings)
 
 # General info
-[RefactoringMiner](https://github.com/tsantalis/RefactoringMiner) (developed by Nikolaos Tsantali et al.) is a Java library that can detects refactorings applied in the commit history of a Java project. We extend the RefactoringMiner to Python. Now, you can use this RefactoringMiner to detect refactorings applied in Python projects.
+[RefactoringMiner](https://github.com/tsantalis/RefactoringMiner) (developed by Nikolaos Tsantali et al.) is a Java library that can detects refactorings applied in the commit history of a Java project. We extend the RefactoringMiner to Python. Now, you can use *Python-adapted RefactoringMiner* to detect refactorings applied in Python projects.
 
 Technically, it should support all the refactoring detected by the original RefacotringMiner (please refer [this](https://github.com/tsantalis/RefactoringMiner#general-info)). However, we manually valiaded only 19 kinds of refacotrings. All the validation results are available in our [website](https://mledits.github.io).
 
 
-# How to use RefactoringMiner as a maven dependency
+# How to use Python-adapted RefactoringMiner as a maven dependency
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.maldil/python-refactoring-miner/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.maldil/python-refactoring-miner)
 Python-adapted RefactoringMiner is available in the [Maven Central Repository](https://mvnrepository.com/artifact/io.github.maldil/python-refactoring-miner).
 In order to use RefactoringMiner as a maven dependency in your project, add the following snippet to your project's build configuration file:
@@ -28,8 +28,8 @@ In order to use RefactoringMiner as a maven dependency in your project, add the 
 	    <version>1.0.2</version>
 	</dependency>
 
-# How to build RefactoringMiner
-Building RefactoringMiner could be slidly complex due to Eclips-JDT paser. You have to build the Eclips-JDT paser ([https://github.com/maldil/PyEclipsJDTParser](https://github.com/maldil/PyEclipsJDTParser)) locally and install it to the local Maven repository before building RefactoringMiner. 
+# How to build Python-adapted RefactoringMiner
+Building Python-adapted RefactoringMiner could be slidly complex due to Eclipse-JDT paser. You have to build the Eclipse-JDT paser ([https://github.com/maldil/PyEclipsJDTParser](https://github.com/maldil/PyEclipsJDTParser)) locally and install it to the local Maven repository before building RefactoringMiner. 
 
 # Research
 ## How to cite RefactoringMiner
