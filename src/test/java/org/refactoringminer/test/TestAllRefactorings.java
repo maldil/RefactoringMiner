@@ -33,7 +33,7 @@ public class TestAllRefactorings {
 				Configuration.PROJECT_REPO+"maldil/MLEditsTest",
 				"https://github.com/maldil/MLEditsTest.git");
 
-		
+
 		miner.detectAll(repo, repo.getBranch(), new RefactoringHandler() {
 			@Override
 			public void handle(String commitId, List<Refactoring> refactorings) {
