@@ -34,6 +34,11 @@ public class TestAllRefactorings {
 				"https://github.com/maldil/MLEditsTest.git");
 
 
+
+
+
+
+
 		miner.detectAll(repo, repo.getBranch(), new RefactoringHandler() {
 			@Override
 			public void handle(String commitId, List<Refactoring> refactorings) {
