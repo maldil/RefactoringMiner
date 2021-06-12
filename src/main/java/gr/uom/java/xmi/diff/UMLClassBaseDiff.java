@@ -11,10 +11,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+<<<<<<< HEAD:src/main/java/gr/uom/java/xmi/diff/UMLClassBaseDiff.java
 import  refactoringminer.api.Refactoring;
 import  refactoringminer.api.RefactoringMinerTimedOutException;
 import  refactoringminer.util.PrefixSuffixUtils;
 import  refactoringminer.api.RefactoringType;
+=======
+import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.api.RefactoringMinerTimedOutException;
+import org.refactoringminer.api.RefactoringType;
+import org.refactoringminer.util.PrefixSuffixUtils;
+>>>>>>> 1001909caf5ea6586c74a0f80ee71382da46fb5d:src/gr/uom/java/xmi/diff/UMLClassBaseDiff.java
 
 import gr.uom.java.xmi.UMLAnnotation;
 import gr.uom.java.xmi.UMLAnonymousClass;

@@ -605,8 +605,13 @@ public class VariableReplacementAnalysis {
 	}
 
 	private void getVariableRefactorings(VariableDeclaration variableDeclaration1,
+<<<<<<< HEAD:src/main/java/gr/uom/java/xmi/decomposition/VariableReplacementAnalysis.java
 										 VariableDeclaration variableDeclaration2, UMLOperation operation1, UMLOperation operation2,
 										 Set<AbstractCodeMapping> variableReferences, RenameVariableRefactoring ref) {
+=======
+			VariableDeclaration variableDeclaration2, UMLOperation operation1, UMLOperation operation2,
+			Set<AbstractCodeMapping> variableReferences, RenameVariableRefactoring ref) {
+>>>>>>> 1001909caf5ea6586c74a0f80ee71382da46fb5d:src/gr/uom/java/xmi/decomposition/VariableReplacementAnalysis.java
 		if(!variableDeclaration1.getType().equals(variableDeclaration2.getType()) || !variableDeclaration1.getType().equalsQualified(variableDeclaration2.getType())) {
 			ChangeVariableTypeRefactoring refactoring = new ChangeVariableTypeRefactoring(variableDeclaration1, variableDeclaration2, operation1, operation2, variableReferences);
 			if(ref != null) {

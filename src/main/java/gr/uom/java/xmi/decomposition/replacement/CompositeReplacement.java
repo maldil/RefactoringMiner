@@ -26,6 +26,9 @@ public class CompositeReplacement extends Replacement {
 	public int getTotalAdditionallyMatchedStatements() {
 		return additionallyMatchedStatements1.size() + additionallyMatchedStatements2.size();
 	}
+<<<<<<< HEAD:src/main/java/gr/uom/java/xmi/decomposition/replacement/CompositeReplacement.java
 
+=======
+>>>>>>> 1001909caf5ea6586c74a0f80ee71382da46fb5d:src/gr/uom/java/xmi/decomposition/replacement/CompositeReplacement.java
 }
 
