@@ -36,10 +36,14 @@ public class RenameVariableRefactoring implements Refactoring {
 	public RefactoringType getRefactoringType() {
 		if(originalVariable.isParameter() && renamedVariable.isParameter())
 			return RefactoringType.RENAME_PARAMETER;
+		if(originalVariable.isAttribute() && renamedVariable.isParameter())
+			return RefactoringType.PARAMETERIZE_ATTRIBUTE;
 		if(!originalVariable.isParameter() && renamedVariable.isParameter())
 			return RefactoringType.PARAMETERIZE_VARIABLE;
 		if(!originalVariable.isAttribute() && renamedVariable.isAttribute())
 			return RefactoringType.REPLACE_VARIABLE_WITH_ATTRIBUTE;
+		if(originalVariable.isAttribute() && !renamedVariable.isAttribute())
+			return RefactoringType.REPLACE_ATTRIBUTE_WITH_VARIABLE;
 		return RefactoringType.RENAME_VARIABLE;
 	}
 

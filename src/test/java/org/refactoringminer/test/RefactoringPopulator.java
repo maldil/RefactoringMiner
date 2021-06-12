@@ -93,7 +93,22 @@ public class RefactoringPopulator {
 		RemoveThrownExceptionType(new BigInteger("1152921504606846976")),
 		ChangeThrownExceptionType(new BigInteger("2305843009213693952")),
 		ChangeMethodAccessModifier(new BigInteger("4611686018427387904")),
-		All(new BigInteger("9223372036854775807"));
+		ChangeAttributeAccessModifier(new BigInteger("9223372036854775808")),
+		EncapsulateAttribute(new BigInteger("18446744073709551616")),
+		ParameterizeAttribute(new BigInteger("36893488147419103232")),
+		ReplaceAttributeWithVariable(new BigInteger("73786976294838206464")),
+		AddMethodModifier(new BigInteger("147573952589676412928")),
+		RemoveMethodModifier(new BigInteger("295147905179352825856")),
+		AddAttributeModifier(new BigInteger("590295810358705651712")),
+		RemoveAttributeModifier(new BigInteger("1180591620717411303424")),
+		AddVariableModifier(new BigInteger("2361183241434822606848")),
+		AddParameterModifier(new BigInteger("4722366482869645213696")),
+		RemoveVariableModifier(new BigInteger("9444732965739290427392")),
+		RemoveParameterModifier(new BigInteger("18889465931478580854784")),
+		ChangeClassAccessModifier(new BigInteger("37778931862957161709568")),
+		AddClassModifier(new BigInteger("75557863725914323419136")),
+		RemoveClassModifier(new BigInteger("151115727451828646838272")),
+		All(new BigInteger("302231454903657293676543"));
 
 		private BigInteger value;
 

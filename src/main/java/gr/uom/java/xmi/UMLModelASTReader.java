@@ -479,7 +479,10 @@ public class UMLModelASTReader {
 		int modifiers = typeDeclaration.getModifiers();
     	if((modifiers & Modifier.ABSTRACT) != 0)
     		umlClass.setAbstract(true);
-    	
+		if((modifiers & Modifier.STATIC) != 0)
+			umlClass.setStatic(true);
+		if((modifiers & Modifier.FINAL) != 0)
+			umlClass.setFinal(true);
     	if((modifiers & Modifier.PUBLIC) != 0)
     		umlClass.setVisibility("public");
     	else if((modifiers & Modifier.PROTECTED) != 0)
@@ -529,7 +532,10 @@ public class UMLModelASTReader {
 		
 		if((methodModifiers & Modifier.STATIC) != 0)
 			umlOperation.setStatic(true);
-		
+
+		if((methodModifiers & Modifier.SYNCHRONIZED) != 0)
+			umlOperation.setSynchronized(true);
+
 		List<IExtendedModifier> extendedModifiers = methodDeclaration.modifiers();
 		for(IExtendedModifier extendedModifier : extendedModifiers) {
 			if(extendedModifier.isAnnotation()) {
@@ -537,7 +543,7 @@ public class UMLModelASTReader {
 				umlOperation.addAnnotation(new UMLAnnotation(cu, sourceFile, annotation));
 			}
 		}
-		
+
 		List<TypeParameter> typeParameters = methodDeclaration.typeParameters();
 		for(TypeParameter typeParameter : typeParameters) {
 			UMLTypeParameter umlTypeParameter = new UMLTypeParameter(typeParameter.getName().getFullyQualifiedName());
@@ -644,7 +650,11 @@ public class UMLModelASTReader {
 			
 			if((fieldModifiers & Modifier.STATIC) != 0)
 				umlAttribute.setStatic(true);
-			
+			if((fieldModifiers & Modifier.VOLATILE) != 0)
+				umlAttribute.setVolatile(true);
+
+			if((fieldModifiers & Modifier.TRANSIENT) != 0)
+				umlAttribute.setTransient(true);
 			attributes.add(umlAttribute);
 		}
 		return attributes;

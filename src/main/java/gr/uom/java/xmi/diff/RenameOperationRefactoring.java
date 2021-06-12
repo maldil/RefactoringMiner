@@ -1,16 +1,18 @@
 package gr.uom.java.xmi.diff;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import  refactoringminer.api.Refactoring;
-import  refactoringminer.api.RefactoringType;
+import refactoringminer.api.Refactoring;
+import refactoringminer.api.RefactoringType;
 
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
+import gr.uom.java.xmi.decomposition.replacement.MethodInvocationReplacement;
 import gr.uom.java.xmi.decomposition.replacement.Replacement;
 
 public class RenameOperationRefactoring implements Refactoring {
@@ -18,18 +20,21 @@ public class RenameOperationRefactoring implements Refactoring {
 	private UMLOperation renamedOperation;
 	private Set<Replacement> replacements;
 	private UMLOperationBodyMapper bodyMapper;
-	
-	public RenameOperationRefactoring(UMLOperationBodyMapper bodyMapper) {
+	private Set<MethodInvocationReplacement> callReferences;
+
+	public RenameOperationRefactoring(UMLOperationBodyMapper bodyMapper, Set<MethodInvocationReplacement> callReferences) {
 		this.bodyMapper = bodyMapper;
 		this.originalOperation = bodyMapper.getOperation1();
 		this.renamedOperation = bodyMapper.getOperation2();
 		this.replacements = bodyMapper.getReplacements();
+		this.callReferences = callReferences;
 	}
 
 	public RenameOperationRefactoring(UMLOperation originalOperation, UMLOperation renamedOperation) {
 		this.originalOperation = originalOperation;
 		this.renamedOperation = renamedOperation;
-		this.replacements = new LinkedHashSet<Replacement>();
+		this.replacements = new HashSet<Replacement>();
+		this.callReferences = new HashSet<MethodInvocationReplacement>();
 	}
 
 	public String toString() {
@@ -82,6 +87,10 @@ public class RenameOperationRefactoring implements Refactoring {
 
 	public Set<Replacement> getReplacements() {
 		return replacements;
+	}
+
+	public Set<MethodInvocationReplacement> getCallReferences() {
+		return callReferences;
 	}
 
 	/**

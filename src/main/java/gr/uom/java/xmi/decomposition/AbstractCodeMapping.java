@@ -8,6 +8,7 @@ import  refactoringminer.api.Refactoring;
 import  refactoringminer.util.PrefixSuffixUtils;
 
 import gr.uom.java.xmi.UMLOperation;
+import gr.uom.java.xmi.decomposition.replacement.CompositeReplacement;
 import gr.uom.java.xmi.decomposition.replacement.MethodInvocationReplacement;
 import gr.uom.java.xmi.decomposition.replacement.ObjectCreationReplacement;
 import gr.uom.java.xmi.decomposition.replacement.Replacement;
@@ -62,14 +63,29 @@ public abstract class AbstractCodeMapping {
 	}
 
 	public boolean isExact() {
-		return (fragment1.getArgumentizedString().equals(fragment2.getArgumentizedString()) ||
-				fragment1.getString().equals(fragment2.getString()) || isExactAfterAbstraction() || containsIdenticalOrCompositeReplacement()) && !isKeyword();
-	}
+		return (fragment1.getArgumentizedString().equals(fragment2.getArgumentizedString()) || argumentizedStringExactAfterTypeReplacement() ||
+				fragment1.getString().equals(fragment2.getString()) || isExactAfterAbstraction() || containsIdenticalOrCompositeReplacement()) && !isKeyword();}
 
 	private boolean isKeyword() {
 		return fragment1.getString().startsWith("return;") ||
 				fragment1.getString().startsWith("break;") ||
 				fragment1.getString().startsWith("continue;");
+	}
+
+	private boolean argumentizedStringExactAfterTypeReplacement() {
+		String s1 = fragment1.getArgumentizedString();
+		String s2 = fragment2.getArgumentizedString();
+		for(Replacement r : replacements) {
+			if(r.getType().equals(ReplacementType.TYPE)) {
+				if(s1.startsWith(r.getBefore()) && s2.startsWith(r.getAfter())) {
+					String temp = s2.replace(r.getAfter(), r.getBefore());
+					if(s1.equals(temp) || (s1 + ";\n").equals(temp)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	private boolean isExactAfterAbstraction() {
@@ -99,6 +115,15 @@ public abstract class AbstractCodeMapping {
 		return false;
 	}
 
+	public CompositeReplacement containsCompositeReplacement() {
+		for(Replacement r : replacements) {
+			if(r.getType().equals(ReplacementType.COMPOSITE)) {
+				return (CompositeReplacement)r;
+			}
+		}
+		return null;
+	}
+
 	public void addReplacement(Replacement replacement) {
 		this.replacements.add(replacement);
 	}
@@ -118,6 +143,15 @@ public abstract class AbstractCodeMapping {
 			}
 		}
 		return false;
+	}
+
+	public boolean containsOnlyReplacement(ReplacementType type) {
+		for(Replacement replacement : replacements) {
+			if(!replacement.getType().equals(type)) {
+				return false;
+			}
+		}
+		return replacements.size() > 0;
 	}
 
 	public Set<ReplacementType> getReplacementTypes() {

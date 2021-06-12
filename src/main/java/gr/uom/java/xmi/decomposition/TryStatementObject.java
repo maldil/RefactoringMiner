@@ -33,13 +33,7 @@ public class TryStatementObject extends CompositeStatementObject {
 		return finallyClause;
 	}
 
-	@Override
-	public List<VariableDeclaration> getVariableDeclarations() {
-		List<VariableDeclaration> variableDeclarations = new ArrayList<VariableDeclaration>();
-		variableDeclarations.addAll(super.getVariableDeclarations());
-		for(CompositeStatementObject catchClause : catchClauses) {
-			variableDeclarations.addAll(catchClause.getVariableDeclarations());
-		}
-		return variableDeclarations;
+	public boolean isTryWithResources() {
+		return getExpressions().size() > 0;
 	}
 }

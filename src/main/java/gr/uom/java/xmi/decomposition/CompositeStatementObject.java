@@ -103,9 +103,34 @@ public class CompositeStatementObject extends AbstractStatement {
 		if(expressionList.size() > 0) {
 			sb.append("(");
 			for(int i=0; i<expressionList.size()-1; i++) {
-				sb.append(expressionList.get(i).toString()).append("; ");
+				AbstractExpression expression = expressionList.get(i);
+				//special handling for the string representation of enhanced-for parameter declaration
+				if(expression.getLocationInfo().getCodeElementType().equals(CodeElementType.ENHANCED_FOR_STATEMENT_PARAMETER_NAME)) {
+					VariableDeclaration parameterDeclaration = this.getVariableDeclaration(expression.toString());
+					if(parameterDeclaration != null) {
+						if(parameterDeclaration.isFinal()) {
+							sb.append("final").append(" ");
+						}
+						sb.append(parameterDeclaration.getVariableName()).append(": ");
+					}
+				}
+				else {
+					sb.append(expression.toString()).append("; ");
+				}
 			}
-			sb.append(expressionList.get(expressionList.size()-1).toString());
+			AbstractExpression lastExpression = expressionList.get(expressionList.size()-1);
+			if(lastExpression.getLocationInfo().getCodeElementType().equals(CodeElementType.CATCH_CLAUSE_EXCEPTION_NAME)) {
+				VariableDeclaration exceptionDeclaration = this.getVariableDeclaration(lastExpression.toString());
+				if(exceptionDeclaration != null) {
+					if(exceptionDeclaration.isFinal()) {
+						sb.append("final").append(" ");
+					}
+					sb.append(exceptionDeclaration.getVariableName());
+				}
+			}
+			else {
+				sb.append(lastExpression.toString());
+			}
 			sb.append(")");
 		}
 		return sb.toString();
@@ -336,17 +361,22 @@ public class CompositeStatementObject extends AbstractStatement {
 					}
 				}
 				for(LambdaExpressionObject lambda : statementObject.getLambdas()) {
+					Map<String, List<OperationInvocation>> lambdaMap = null;
 					if(lambda.getBody() != null) {
-						Map<String, List<OperationInvocation>> lambdaMap = lambda.getBody().getCompositeStatement().getAllMethodInvocations();
-						for(String key : lambdaMap.keySet()) {
-							if(map.containsKey(key)) {
-								map.get(key).addAll(lambdaMap.get(key));
-							}
-							else {
-								List<OperationInvocation> list = new ArrayList<OperationInvocation>();
-								list.addAll(lambdaMap.get(key));
-								map.put(key, list);
-							}
+						lambdaMap = lambda.getBody().getCompositeStatement().getAllMethodInvocations();
+					}
+					else if(lambda.getExpression() != null) {
+						lambdaMap = new LinkedHashMap<String, List<OperationInvocation>>();
+						lambdaMap.putAll(lambda.getExpression().getMethodInvocationMap());
+					}
+					for(String key : lambdaMap.keySet()) {
+						if(map.containsKey(key)) {
+							map.get(key).addAll(lambdaMap.get(key));
+						}
+						else {
+							List<OperationInvocation> list = new ArrayList<OperationInvocation>();
+							list.addAll(lambdaMap.get(key));
+							map.put(key, list);
 						}
 					}
 				}

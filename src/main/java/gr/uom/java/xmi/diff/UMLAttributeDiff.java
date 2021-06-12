@@ -4,13 +4,15 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
-import  refactoringminer.api.Refactoring;
-import  refactoringminer.api.RefactoringMinerTimedOutException;
+import refactoringminer.api.Refactoring;
+import refactoringminer.api.RefactoringMinerTimedOutException;
 
 import gr.uom.java.xmi.UMLAnnotation;
 import gr.uom.java.xmi.UMLAnonymousClass;
 import gr.uom.java.xmi.UMLAttribute;
+import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
 import gr.uom.java.xmi.decomposition.VariableDeclaration;
 import gr.uom.java.xmi.decomposition.VariableReferenceExtractor;
@@ -24,9 +26,13 @@ public class UMLAttributeDiff {
 	private boolean renamed;
 	private boolean staticChanged;
 	private boolean finalChanged;
+	private boolean volatileChanged;
+	private boolean transientChanged;
 	private List<UMLOperationBodyMapper> operationBodyMapperList;
 	private UMLAnnotationListDiff annotationListDiff;
 	private List<UMLAnonymousClassDiff> anonymousClassDiffList;
+	private UMLOperation addedGetter;
+	private UMLOperation addedSetter;
 
 	public UMLAttributeDiff(UMLAttribute removedAttribute, UMLAttribute addedAttribute, UMLClassBaseDiff classDiff, UMLModelDiff modelDiff) throws RefactoringMinerTimedOutException {
 		this(removedAttribute, addedAttribute, classDiff.getOperationBodyMapperList());
@@ -41,6 +47,42 @@ public class UMLAttributeDiff {
 				anonymousClassDiffList.add(anonymousClassDiff);
 			}
 		}
+		this.addedGetter = findMethod(classDiff.getAddedOperations(), addedAttribute, getterCondition(addedAttribute));
+		if(this.addedGetter != null && !removedAttribute.getName().equals(addedAttribute.getName())) {
+			UMLOperation removedGetter = findMethod(classDiff.getRemovedOperations(), removedAttribute, getterCondition(removedAttribute));
+			if(removedGetter != null) {
+				this.addedGetter = null;
+			}
+		}
+		this.addedSetter = findMethod(classDiff.getAddedOperations(), addedAttribute, setterCondition(addedAttribute));
+		if(this.addedSetter != null && !removedAttribute.getName().equals(addedAttribute.getName())) {
+			UMLOperation removedSetter = findMethod(classDiff.getRemovedOperations(), removedAttribute, setterCondition(removedAttribute));
+			if(removedSetter != null) {
+				this.addedSetter = null;
+			}
+		}
+	}
+
+	private Function<UMLOperation, Boolean> getterCondition(UMLAttribute attribute) {
+		return (UMLOperation operation) -> operation.isGetter() && (operation.getReturnParameter().getType().equals(attribute.getType()) ||
+				operation.getReturnParameter().getType().getClassType().equalsIgnoreCase(attribute.getType().getClassType()));
+	}
+
+	private Function<UMLOperation, Boolean> setterCondition(UMLAttribute attribute) {
+		return (UMLOperation operation) -> operation.isSetter() && (operation.getParameterTypeList().get(0).equals(attribute.getType()) ||
+				operation.getParameterTypeList().get(0).getClassType().equalsIgnoreCase(attribute.getType().getClassType()));
+	}
+
+	private UMLOperation findMethod(List<UMLOperation> operations, UMLAttribute attribute, Function<UMLOperation, Boolean> condition) {
+		for(UMLOperation operation : operations) {
+			if(!operation.isConstructor() && !operation.hasOverrideAnnotation() && condition.apply(operation)) {
+				List<String> variables = operation.getAllVariables();
+				if(variables.contains(attribute.getName()) || variables.contains("this." + attribute.getName())) {
+					return operation;
+				}
+			}
+		}
+		return null;
 	}
 
 	public UMLAttributeDiff(UMLAttribute removedAttribute, UMLAttribute addedAttribute, List<UMLOperationBodyMapper> operationBodyMapperList) {
@@ -65,6 +107,10 @@ public class UMLAttributeDiff {
 			staticChanged = true;
 		if(removedAttribute.isFinal() != addedAttribute.isFinal())
 			finalChanged = true;
+		if(removedAttribute.isVolatile() != addedAttribute.isVolatile())
+			volatileChanged = true;
+		if(removedAttribute.isTransient() != addedAttribute.isTransient())
+			transientChanged = true;
 		this.annotationListDiff = new UMLAnnotationListDiff(removedAttribute.getAnnotations(), addedAttribute.getAnnotations());
 	}
 
@@ -93,7 +139,7 @@ public class UMLAttributeDiff {
 	}
 
 	public boolean isEmpty() {
-		return !visibilityChanged && !typeChanged && !renamed && !qualifiedTypeChanged && annotationListDiff.isEmpty() && anonymousClassDiffList.isEmpty();
+		return !visibilityChanged && !staticChanged && !finalChanged && !volatileChanged && !transientChanged && !typeChanged && !renamed && !qualifiedTypeChanged && annotationListDiff.isEmpty() && anonymousClassDiffList.isEmpty() && addedGetter == null && addedSetter == null;
 	}
 
 	public String toString() {
@@ -156,11 +202,65 @@ public class UMLAttributeDiff {
 					VariableReferenceExtractor.findReferences(removedAttribute.getVariableDeclaration(), addedAttribute.getVariableDeclaration(), operationBodyMapperList));
 			refactorings.add(ref);
 		}
+		refactorings.addAll(getModifierRefactorings());
 		refactorings.addAll(getAnnotationRefactorings());
 		refactorings.addAll(getAnonymousClassRefactorings());
 		return refactorings;
 	}
-	
+
+	private Set<Refactoring> getModifierRefactorings() {
+		Set<Refactoring> refactorings = new LinkedHashSet<Refactoring>();
+		if(isVisibilityChanged()) {
+			ChangeAttributeAccessModifierRefactoring ref = new ChangeAttributeAccessModifierRefactoring(removedAttribute.getVisibility(), addedAttribute.getVisibility(), removedAttribute, addedAttribute);
+			refactorings.add(ref);
+		}
+		if(encapsulationCondition()) {
+			EncapsulateAttributeRefactoring ref = new EncapsulateAttributeRefactoring(removedAttribute, addedAttribute, addedGetter, addedSetter);
+			refactorings.add(ref);
+		}
+		if(finalChanged) {
+			if(addedAttribute.isFinal()) {
+				AddAttributeModifierRefactoring ref = new AddAttributeModifierRefactoring("final", removedAttribute, addedAttribute);
+				refactorings.add(ref);
+			}
+			else if(removedAttribute.isFinal()) {
+				RemoveAttributeModifierRefactoring ref = new RemoveAttributeModifierRefactoring("final", removedAttribute, addedAttribute);
+				refactorings.add(ref);
+			}
+		}
+		if(staticChanged) {
+			if(addedAttribute.isStatic()) {
+				AddAttributeModifierRefactoring ref = new AddAttributeModifierRefactoring("static", removedAttribute, addedAttribute);
+				refactorings.add(ref);
+			}
+			else if(removedAttribute.isStatic()) {
+				RemoveAttributeModifierRefactoring ref = new RemoveAttributeModifierRefactoring("static", removedAttribute, addedAttribute);
+				refactorings.add(ref);
+			}
+		}
+		if(transientChanged) {
+			if(addedAttribute.isTransient()) {
+				AddAttributeModifierRefactoring ref = new AddAttributeModifierRefactoring("transient", removedAttribute, addedAttribute);
+				refactorings.add(ref);
+			}
+			else if(removedAttribute.isTransient()) {
+				RemoveAttributeModifierRefactoring ref = new RemoveAttributeModifierRefactoring("transient", removedAttribute, addedAttribute);
+				refactorings.add(ref);
+			}
+		}
+		if(volatileChanged) {
+			if(addedAttribute.isVolatile()) {
+				AddAttributeModifierRefactoring ref = new AddAttributeModifierRefactoring("volatile", removedAttribute, addedAttribute);
+				refactorings.add(ref);
+			}
+			else if(removedAttribute.isVolatile()) {
+				RemoveAttributeModifierRefactoring ref = new RemoveAttributeModifierRefactoring("volatile", removedAttribute, addedAttribute);
+				refactorings.add(ref);
+			}
+		}
+		return refactorings;
+	}
+
 	public Set<Refactoring> getRefactorings(Set<CandidateAttributeRefactoring> set) {
 		Set<Refactoring> refactorings = new LinkedHashSet<Refactoring>();
 		RenameAttributeRefactoring rename = null;
@@ -176,9 +276,14 @@ public class UMLAttributeDiff {
 				ref.addRelatedRefactoring(rename);
 			}
 		}
+		refactorings.addAll(getModifierRefactorings());
 		refactorings.addAll(getAnnotationRefactorings());
 		refactorings.addAll(getAnonymousClassRefactorings());
 		return refactorings;
+	}
+
+	private boolean encapsulationCondition() {
+		return addedSetter != null || addedGetter != null;
 	}
 
 	private boolean changeTypeCondition() {

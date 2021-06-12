@@ -314,7 +314,7 @@ public abstract class AbstractCall implements LocationInfoProvider {
 
 	public boolean identicalWithDifferentNumberOfArguments(AbstractCall call, Set<Replacement> replacements, Map<String, String> parameterToArgumentMap) {
 		if(onlyArgumentsChanged(call, replacements)) {
-			int argumentIntersectionSize = argumentIntersectionSize(call, parameterToArgumentMap);
+			int argumentIntersectionSize = argumentIntersectionSize(call, replacements, parameterToArgumentMap);
 			if(argumentIntersectionSize > 0 || getArguments().size() == 0 || call.getArguments().size() == 0) {
 				return true;
 			}
@@ -338,7 +338,7 @@ public abstract class AbstractCall implements LocationInfoProvider {
 					String argument2 = arguments2.get(i);
 					if(argument1.contains("->") && argument2.contains("->")) {
 						for(UMLOperationBodyMapper lambdaMapper : lambdaMappers) {
-							if(!(lambdaMapper.nonMappedElementsT1() == 0 && lambdaMapper.nonMappedElementsT2() == 0)) {
+							if(lambdaMapper.nonMappedElementsT1() > 0 && lambdaMapper.nonMappedElementsT2() > 0) {
 								return false;
 							}
 						}
@@ -374,13 +374,18 @@ public abstract class AbstractCall implements LocationInfoProvider {
 		return args;
 	}
 
-	private int argumentIntersectionSize(AbstractCall call, Map<String, String> parameterToArgumentMap) {
+	private int argumentIntersectionSize(AbstractCall call, Set<Replacement> replacements, Map<String, String> parameterToArgumentMap) {
 		Set<String> argumentIntersection = argumentIntersection(call);
 		int argumentIntersectionSize = argumentIntersection.size();
 		for(String parameter : parameterToArgumentMap.keySet()) {
 			String argument = parameterToArgumentMap.get(parameter);
 			if(getArguments().contains(argument) &&
 					call.getArguments().contains(parameter)) {
+				argumentIntersectionSize++;
+			}
+		}
+		for(Replacement r : replacements) {
+			if(r.isLiteral() && getArguments().contains(r.getBefore()) && call.getArguments().contains(r.getAfter())) {
 				argumentIntersectionSize++;
 			}
 		}

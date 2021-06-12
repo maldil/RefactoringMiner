@@ -2,14 +2,15 @@ package gr.uom.java.xmi.decomposition;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import  refactoringminer.api.Refactoring;
-import  refactoringminer.util.PrefixSuffixUtils;
+import refactoringminer.api.Refactoring;
+import refactoringminer.util.PrefixSuffixUtils;
 
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.UMLParameter;
@@ -26,6 +27,7 @@ import gr.uom.java.xmi.decomposition.replacement.VariableReplacementWithMethodIn
 import gr.uom.java.xmi.decomposition.replacement.Replacement.ReplacementType;
 import gr.uom.java.xmi.decomposition.replacement.SplitVariableReplacement;
 import gr.uom.java.xmi.diff.AddVariableAnnotationRefactoring;
+import gr.uom.java.xmi.diff.AddVariableModifierRefactoring;
 import gr.uom.java.xmi.diff.CandidateAttributeRefactoring;
 import gr.uom.java.xmi.diff.CandidateMergeVariableRefactoring;
 import gr.uom.java.xmi.diff.CandidateSplitVariableRefactoring;
@@ -36,6 +38,7 @@ import gr.uom.java.xmi.diff.InlineVariableRefactoring;
 import gr.uom.java.xmi.diff.MergeVariableRefactoring;
 import gr.uom.java.xmi.diff.ModifyVariableAnnotationRefactoring;
 import gr.uom.java.xmi.diff.RemoveVariableAnnotationRefactoring;
+import gr.uom.java.xmi.diff.RemoveVariableModifierRefactoring;
 import gr.uom.java.xmi.diff.RenameVariableRefactoring;
 import gr.uom.java.xmi.diff.SplitVariableRefactoring;
 import gr.uom.java.xmi.diff.UMLAnnotationDiff;
@@ -87,6 +90,55 @@ public class VariableReplacementAnalysis {
 		findConsistentVariableRenames();
 		findParametersWrappedInLocalVariables();
 		findAttributeExtractions();
+		findTypeChanges();
+	}
+
+	private void findTypeChanges() {
+		for(AbstractCodeMapping mapping : mappings) {
+			AbstractCodeFragment fragment1 = mapping.getFragment1();
+			AbstractCodeFragment fragment2 = mapping.getFragment2();
+			List<VariableDeclaration> declarations1 = fragment1.getVariableDeclarations();
+			List<VariableDeclaration> declarations2 = fragment2.getVariableDeclarations();
+			if(declarations1.size() == declarations2.size()) {
+				for(int i=0; i<declarations1.size(); i++) {
+					VariableDeclaration declaration1 = declarations1.get(i);
+					VariableDeclaration declaration2 = declarations2.get(i);
+					if(declaration1.getVariableName().equals(declaration2.getVariableName())) {
+						if(declaration1.getType().equals(declaration2.getType()) && declaration1.getType().equalsQualified(declaration2.getType())) {
+							getVariableRefactorings(declaration1, declaration2, mapping.getOperation1(), mapping.getOperation2(), Collections.emptySet(), null);
+						}
+						else if(!containsVariableDeclarationWithSameNameAndType(declaration1, declarations2) &&
+								!containsVariableDeclarationWithSameNameAndType(declaration2, declarations1)) {
+							Set<AbstractCodeMapping> variableReferences = VariableReferenceExtractor.findReferences(declaration1, declaration2, mappings);
+							getVariableRefactorings(declaration1, declaration2, mapping.getOperation1(), mapping.getOperation2(), variableReferences, null);
+						}
+					}
+				}
+			}
+			else if(declarations1.size() > 0 && declarations2.size() > 0) {
+				VariableDeclaration declaration1 = declarations1.get(0);
+				VariableDeclaration declaration2 = declarations2.get(0);
+				if(declaration1.getVariableName().equals(declaration2.getVariableName())) {
+					if(declaration1.getType().equals(declaration2.getType()) && declaration1.getType().equalsQualified(declaration2.getType())) {
+						getVariableRefactorings(declaration1, declaration2, mapping.getOperation1(), mapping.getOperation2(), Collections.emptySet(), null);
+					}
+					else if(!containsVariableDeclarationWithSameNameAndType(declaration1, declarations2) &&
+							!containsVariableDeclarationWithSameNameAndType(declaration2, declarations1)) {
+						Set<AbstractCodeMapping> variableReferences = VariableReferenceExtractor.findReferences(declaration1, declaration2, mappings);
+						getVariableRefactorings(declaration1, declaration2, mapping.getOperation1(), mapping.getOperation2(), variableReferences, null);
+					}
+				}
+			}
+		}
+	}
+
+	private boolean containsVariableDeclarationWithSameNameAndType(VariableDeclaration declaration, List<VariableDeclaration> declarations) {
+		for(VariableDeclaration d : declarations) {
+			if(d.getVariableName().equals(declaration.getVariableName()) && d.getType().equals(declaration.getType()) && d.getType().equalsQualified(declaration.getType())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void findAttributeExtractions() {
@@ -481,34 +533,21 @@ public class VariableReplacementAnalysis {
 		Set<Replacement> allConsistentVariableDeclarationRenames = allConsistentRenames(variableDeclarationReplacementOccurrenceMap);
 		for(Replacement replacement : allConsistentVariableDeclarationRenames) {
 			VariableDeclarationReplacement vdReplacement = (VariableDeclarationReplacement)replacement;
-			Set<AbstractCodeMapping> set = variableDeclarationReplacementOccurrenceMap.get(vdReplacement);
-			if((set.size() > 1 && consistencyCheck(vdReplacement.getVariableDeclaration1(), vdReplacement.getVariableDeclaration2(), set)) ||
-					(set.size() == 1 && replacementInLocalVariableDeclaration(vdReplacement.getVariableNameReplacement(), set))) {
-				RenameVariableRefactoring ref = new RenameVariableRefactoring(vdReplacement.getVariableDeclaration1(), vdReplacement.getVariableDeclaration2(), vdReplacement.getOperation1(), vdReplacement.getOperation2(), set);
+			Set<AbstractCodeMapping> variableReferences = variableDeclarationReplacementOccurrenceMap.get(vdReplacement);
+			VariableDeclaration variableDeclaration1 = vdReplacement.getVariableDeclaration1();
+			VariableDeclaration variableDeclaration2 = vdReplacement.getVariableDeclaration2();
+			UMLOperation operation1 = vdReplacement.getOperation1();
+			UMLOperation operation2 = vdReplacement.getOperation2();
+			if((variableReferences.size() > 1 && consistencyCheck(variableDeclaration1, variableDeclaration2, variableReferences)) ||
+					(variableReferences.size() == 1 && replacementInLocalVariableDeclaration(vdReplacement.getVariableNameReplacement(), variableReferences))) {
+				RenameVariableRefactoring ref = new RenameVariableRefactoring(variableDeclaration1, variableDeclaration2, operation1, operation2, variableReferences);
 				if(!existsConflictingExtractVariableRefactoring(ref) && !existsConflictingMergeVariableRefactoring(ref) && !existsConflictingSplitVariableRefactoring(ref)) {
 					variableRenames.add(ref);
-					if(!vdReplacement.getVariableDeclaration1().getType().equals(vdReplacement.getVariableDeclaration2().getType()) || !vdReplacement.getVariableDeclaration1().getType().equalsQualified(vdReplacement.getVariableDeclaration2().getType())) {
-						ChangeVariableTypeRefactoring refactoring = new ChangeVariableTypeRefactoring(vdReplacement.getVariableDeclaration1(), vdReplacement.getVariableDeclaration2(), vdReplacement.getOperation1(), vdReplacement.getOperation2(), set);
-						refactoring.addRelatedRefactoring(ref);
-						refactorings.add(refactoring);
-					}
-					UMLAnnotationListDiff annotationListDiff = new UMLAnnotationListDiff(vdReplacement.getVariableDeclaration1().getAnnotations(), vdReplacement.getVariableDeclaration2().getAnnotations());
-					for(UMLAnnotation annotation : annotationListDiff.getAddedAnnotations()) {
-						AddVariableAnnotationRefactoring refactoring = new AddVariableAnnotationRefactoring(annotation, vdReplacement.getVariableDeclaration1(), vdReplacement.getVariableDeclaration2(), vdReplacement.getOperation1(), vdReplacement.getOperation2());
-						refactorings.add(refactoring);
-					}
-					for(UMLAnnotation annotation : annotationListDiff.getRemovedAnnotations()) {
-						RemoveVariableAnnotationRefactoring refactoring = new RemoveVariableAnnotationRefactoring(annotation, vdReplacement.getVariableDeclaration1(), vdReplacement.getVariableDeclaration2(), vdReplacement.getOperation1(), vdReplacement.getOperation2());
-						refactorings.add(refactoring);
-					}
-					for(UMLAnnotationDiff annotationDiff : annotationListDiff.getAnnotationDiffList()) {
-						ModifyVariableAnnotationRefactoring refactoring = new ModifyVariableAnnotationRefactoring(annotationDiff.getRemovedAnnotation(), annotationDiff.getAddedAnnotation(), vdReplacement.getVariableDeclaration1(), vdReplacement.getVariableDeclaration2(), vdReplacement.getOperation1(), vdReplacement.getOperation2());
-						refactorings.add(refactoring);
-					}
+					getVariableRefactorings(variableDeclaration1, variableDeclaration2, operation1, operation2, variableReferences, ref);
 				}
 			}
 			else {
-				RenameVariableRefactoring ref = new RenameVariableRefactoring(vdReplacement.getVariableDeclaration1(), vdReplacement.getVariableDeclaration2(), vdReplacement.getOperation1(), vdReplacement.getOperation2(), set);
+				RenameVariableRefactoring ref = new RenameVariableRefactoring(variableDeclaration1, variableDeclaration2, operation1, operation2, variableReferences);
 				if(refactorings.contains(ref)) {
 					refactorings.remove(ref);
 				}
@@ -537,28 +576,15 @@ public class VariableReplacementAnalysis {
 			SimpleEntry<VariableDeclaration, UMLOperation> v2 = getVariableDeclaration2(replacement);
 			if(v1 != null && v2 != null) {
 				Set<AbstractCodeMapping> variableReferences = finalConsistentRenames.get(replacement);
-				RenameVariableRefactoring ref = new RenameVariableRefactoring(v1.getKey(), v2.getKey(), v1.getValue(), v2.getValue(), variableReferences);
+				VariableDeclaration variableDeclaration1 = v1.getKey();
+				VariableDeclaration variableDeclaration2 = v2.getKey();
+				UMLOperation operation1 = v1.getValue();
+				UMLOperation operation2 = v2.getValue();
+				RenameVariableRefactoring ref = new RenameVariableRefactoring(variableDeclaration1, variableDeclaration2, operation1, operation2, variableReferences);
 				if(!existsConflictingExtractVariableRefactoring(ref) && !existsConflictingMergeVariableRefactoring(ref) && !existsConflictingSplitVariableRefactoring(ref) &&
-						v1.getKey().isVarargsParameter() == v2.getKey().isVarargsParameter()) {
+						variableDeclaration1.isVarargsParameter() == variableDeclaration2.isVarargsParameter()) {
 					variableRenames.add(ref);
-					if(!v1.getKey().getType().equals(v2.getKey().getType()) || !v1.getKey().getType().equalsQualified(v2.getKey().getType())) {
-						ChangeVariableTypeRefactoring refactoring = new ChangeVariableTypeRefactoring(v1.getKey(), v2.getKey(), v1.getValue(), v2.getValue(), variableReferences);
-						refactoring.addRelatedRefactoring(ref);
-						refactorings.add(refactoring);
-					}
-					UMLAnnotationListDiff annotationListDiff = new UMLAnnotationListDiff(v1.getKey().getAnnotations(), v2.getKey().getAnnotations());
-					for(UMLAnnotation annotation : annotationListDiff.getAddedAnnotations()) {
-						AddVariableAnnotationRefactoring refactoring = new AddVariableAnnotationRefactoring(annotation, v1.getKey(), v2.getKey(), v1.getValue(), v2.getValue());
-						refactorings.add(refactoring);
-					}
-					for(UMLAnnotation annotation : annotationListDiff.getRemovedAnnotations()) {
-						RemoveVariableAnnotationRefactoring refactoring = new RemoveVariableAnnotationRefactoring(annotation, v1.getKey(), v2.getKey(), v1.getValue(), v2.getValue());
-						refactorings.add(refactoring);
-					}
-					for(UMLAnnotationDiff annotationDiff : annotationListDiff.getAnnotationDiffList()) {
-						ModifyVariableAnnotationRefactoring refactoring = new ModifyVariableAnnotationRefactoring(annotationDiff.getRemovedAnnotation(), annotationDiff.getAddedAnnotation(), v1.getKey(), v2.getKey(), v1.getValue(), v2.getValue());
-						refactorings.add(refactoring);
-					}
+					getVariableRefactorings(variableDeclaration1, variableDeclaration2, operation1, operation2, variableReferences, ref);
 				}
 			}
 			else if(!PrefixSuffixUtils.normalize(replacement.getBefore()).equals(PrefixSuffixUtils.normalize(replacement.getAfter())) &&
@@ -574,6 +600,41 @@ public class VariableReplacementAnalysis {
 				if(v2 != null)
 					candidate.setRenamedVariableDeclaration(v2.getKey());
 				this.candidateAttributeRenames.add(candidate);
+			}
+		}
+	}
+
+	private void getVariableRefactorings(VariableDeclaration variableDeclaration1,
+										 VariableDeclaration variableDeclaration2, UMLOperation operation1, UMLOperation operation2,
+										 Set<AbstractCodeMapping> variableReferences, RenameVariableRefactoring ref) {
+		if(!variableDeclaration1.getType().equals(variableDeclaration2.getType()) || !variableDeclaration1.getType().equalsQualified(variableDeclaration2.getType())) {
+			ChangeVariableTypeRefactoring refactoring = new ChangeVariableTypeRefactoring(variableDeclaration1, variableDeclaration2, operation1, operation2, variableReferences);
+			if(ref != null) {
+				refactoring.addRelatedRefactoring(ref);
+			}
+			refactorings.add(refactoring);
+		}
+		UMLAnnotationListDiff annotationListDiff = new UMLAnnotationListDiff(variableDeclaration1.getAnnotations(), variableDeclaration2.getAnnotations());
+		for(UMLAnnotation annotation : annotationListDiff.getAddedAnnotations()) {
+			AddVariableAnnotationRefactoring refactoring = new AddVariableAnnotationRefactoring(annotation, variableDeclaration1, variableDeclaration2, operation1, operation2);
+			refactorings.add(refactoring);
+		}
+		for(UMLAnnotation annotation : annotationListDiff.getRemovedAnnotations()) {
+			RemoveVariableAnnotationRefactoring refactoring = new RemoveVariableAnnotationRefactoring(annotation, variableDeclaration1, variableDeclaration2, operation1, operation2);
+			refactorings.add(refactoring);
+		}
+		for(UMLAnnotationDiff annotationDiff : annotationListDiff.getAnnotationDiffList()) {
+			ModifyVariableAnnotationRefactoring refactoring = new ModifyVariableAnnotationRefactoring(annotationDiff.getRemovedAnnotation(), annotationDiff.getAddedAnnotation(), variableDeclaration1, variableDeclaration2, operation1, operation2);
+			refactorings.add(refactoring);
+		}
+		if(variableDeclaration1.isFinal() != variableDeclaration2.isFinal()) {
+			if(variableDeclaration2.isFinal()) {
+				AddVariableModifierRefactoring refactoring = new AddVariableModifierRefactoring("final", variableDeclaration1, variableDeclaration2, operation1, operation2);
+				refactorings.add(refactoring);
+			}
+			else if(variableDeclaration1.isFinal()) {
+				RemoveVariableModifierRefactoring refactoring = new RemoveVariableModifierRefactoring("final", variableDeclaration1, variableDeclaration2, operation1, operation2);
+				refactorings.add(refactoring);
 			}
 		}
 	}
@@ -1134,7 +1195,7 @@ public class VariableReplacementAnalysis {
 							Map<String, List<OperationInvocation>> methodInvocationMap = v2.getInitializer().getMethodInvocationMap();
 							for(String key : methodInvocationMap.keySet()) {
 								for(OperationInvocation invocation : methodInvocationMap.get(key)) {
-									if(invocation.matchesOperation(extractedMethod, operation2.variableDeclarationMap(), null)) {
+									if(invocation.matchesOperation(extractedMethod, operation2, null)) {
 										return false;
 									}
 									else {
@@ -1146,7 +1207,7 @@ public class VariableReplacementAnalysis {
 													Map<String, List<OperationInvocation>> methodInvocationMap2 = declaration.getInitializer().getMethodInvocationMap();
 													for(String key2 : methodInvocationMap2.keySet()) {
 														for(OperationInvocation invocation2 : methodInvocationMap2.get(key2)) {
-															if(invocation2.matchesOperation(extractedMethod, operation2.variableDeclarationMap(), null)) {
+															if(invocation2.matchesOperation(extractedMethod, operation2, null)) {
 																return false;
 															}
 														}
@@ -1191,7 +1252,7 @@ public class VariableReplacementAnalysis {
 				if(ref.getMergedVariables().contains(parameterDiff.getRemovedParameter().getVariableDeclaration()) &&
 						ref.getNewVariable().equals(parameterDiff.getAddedParameter().getVariableDeclaration())) {
 					return true;
-					
+
 				}
 			}
 		}
@@ -1204,7 +1265,7 @@ public class VariableReplacementAnalysis {
 				if(ref.getSplitVariables().contains(parameterDiff.getAddedParameter().getVariableDeclaration()) &&
 						ref.getOldVariable().equals(parameterDiff.getRemovedParameter().getVariableDeclaration())) {
 					return true;
-					
+
 				}
 			}
 		}

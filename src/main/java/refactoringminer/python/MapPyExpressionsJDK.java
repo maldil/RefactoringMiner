@@ -221,7 +221,7 @@ public class MapPyExpressionsJDK extends PyMap {
                     org.eclipse.jdt.core.dom.Name name = import_nodes.get(((Name) ((Attribute) ((Call) pyexp).getFunc()).getValue()).getId().toString());
                     if (name.getFullyQualifiedName().contains("."))
                     {
-//                        mod mod = PyASTParser.parsePython(name.getFullyQualifiedName());
+//                        usermod = PyASTParser.parsePython(name.getFullyQualifiedName());
 //                        expre =  mapExpression((expr) mod.getChild(0).getChild(0),ast,import_nodes,0);
                         expre = ast.newName(name.getFullyQualifiedName().split("\\."));
                         MapPyStatementsTOJDK.updatePythonLineNumbers(((Name) ((Attribute) ((Call) pyexp).getFunc()).getValue()).getCharStartIndex(), name.getFullyQualifiedName().length(),((Name) ((Attribute) ((Call) pyexp).getFunc()).getValue()).getLineno() ,expre);
