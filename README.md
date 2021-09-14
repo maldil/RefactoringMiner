@@ -30,7 +30,8 @@ In order to use RefactoringMiner as a maven dependency in your project, add the 
 	</dependency>
 
 # How to build Python-adapted RefactoringMiner
-Building Python-adapted RefactoringMiner could be slidly complex due to Eclipse-JDT paser. You have to build the Eclipse-JDT paser ([https://github.com/maldil/PyEclipsJDTParser](https://github.com/maldil/PyEclipsJDTParser)) locally and install it to the local Maven repository before building RefactoringMiner. 
+Building Python-adapted RefactoringMiner could be slidly complex due to Eclipse-JDT paser. You have to build the CustomizedEclipseJDT in [JavaFyPy
+](https://github.com/maldil/JavaFyPy) locally and install it to the local Maven repository before building RefactoringMiner. 
 
 # Research
 ## How to cite RefactoringMiner
