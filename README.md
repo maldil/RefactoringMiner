@@ -15,7 +15,7 @@ Table of Contents
 [RefactoringMiner](https://github.com/tsantalis/RefactoringMiner) (developed by Nikolaos Tsantali et al.) is a Java library that can detects refactorings applied in the commit history of a Java project. We extend the RefactoringMiner to Python. Now, you can use *Python-adapted RefactoringMiner* to detect refactorings applied in Python projects.
 
 
-Technically, it should support all the refactoring detected by the original RefacotringMiner (please refer [this](https://github.com/tsantalis/RefactoringMiner#general-info)). However, we manually valiaded only 19 kinds of refacotrings. All the validation results are available in our [website]().
+Technically, it should support all the refactoring detected by the original RefacotringMiner (please refer [this](https://github.com/tsantalis/RefactoringMiner#general-info)). However, we manually valiaded only 19 kinds of refacotrings. All the validation results are available in our [website](https://mlcodepatterns.github.io).
 
 
 # How to use Python-adapted RefactoringMiner as a maven dependency
