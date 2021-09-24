@@ -26,7 +26,7 @@ In order to use RefactoringMiner as a maven dependency in your project, add the 
 	<dependency>
 	    <groupId>io.github.maldil</groupId>
 	    <artifactId>python-refactoring-miner</artifactId>
-	    <version>1.0.2</version>
+	    <version>1.0.6</version>
 	</dependency>
 
 # How to build Python-adapted RefactoringMiner
