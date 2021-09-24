@@ -65,7 +65,7 @@ public class TestPython {
     public static void analyseProject (String url) throws Exception{
         GitService gitService = new GitServiceImpl();
         GitHistoryRefactoringMiner miner = new GitHistoryRefactoringMinerImpl();
-
+        System.out.println(url);
 
         String projectName = url.split("/")[url.split("/").length-2]+ "/"+
                 url.split("/")[url.split("/").length - 1].split(".git")[0];
@@ -82,67 +82,73 @@ public class TestPython {
 
         System.out.println(commits.size()+"Commits are analysable");
 
-        miner.detectAll(repo, repo.getBranch(), new RefactoringHandler() {
-            @Override
-            public void handle(String commitId, List<Refactoring> refactorings) {
-                System.out.println("Refactorings at " + commitId);
-                for (Refactoring ref : refactorings) {
-                    int python_line = 0;
-                    String pythonFile="";
+        try{
+            miner.detectAll(repo, repo.getBranch(), new RefactoringHandler() {
+                @Override
+                public void handle(String commitId, List<Refactoring> refactorings) {
+                    System.out.println("Refactorings at " + commitId);
+                    for (Refactoring ref : refactorings) {
+                        int python_line = 0;
+                        String pythonFile="";
 
-                    for (CodeRange change : ref.leftSide()) {
-                        if (python_line<change.getPythonStartLine()) {
-                            python_line = change.getPythonStartLine();
-                            pythonFile = change.getFilePath();
+                        for (CodeRange change : ref.leftSide()) {
+                            if (python_line<change.getPythonStartLine()) {
+                                python_line = change.getPythonStartLine();
+                                pythonFile = change.getFilePath();
+
+                            }
+                        }
+                        byte[] fileCode=null;
+                        try {
+                            byte[] bytesOfMessage = pythonFile.getBytes("UTF-8");
+                            MessageDigest md = MessageDigest.getInstance("SHA-256");
+                            fileCode = md.digest(bytesOfMessage);
+                        } catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
 
                         }
-                    }
-                    byte[] fileCode=null;
-                    try {
-                        byte[] bytesOfMessage = pythonFile.getBytes("UTF-8");
-                        MessageDigest md = MessageDigest.getInstance("SHA-256");
-                        fileCode = md.digest(bytesOfMessage);
-                    } catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
 
-                    }
+                        String md5s = pythonFile;
+                        if (fileCode != null) {
+                            StringBuffer sbDigest = new StringBuffer();
+                            for (int i = 0; i < fileCode.length; ++i)
+                                sbDigest.append(Integer.toHexString((fileCode[i] & 0xFF) | 0x100).substring(1,3));
+                            md5s = sbDigest.toString();
+                        }
+                        String[] data1 = { projectName,ref.getRefactoringType().getDisplayName(),"",
+                                "https://github.com/"+projectName+"/commit/"+commitId+"#diff-"+md5s + "L"+python_line ,ref.toString(),"https://github.com/"+projectName+"/commit/"+commitId , pythonFile, commitId };
+                        writer.writeNext(data1);
 
-                    String md5s = pythonFile;
-                    if (fileCode != null) {
-                        StringBuffer sbDigest = new StringBuffer();
-                        for (int i = 0; i < fileCode.length; ++i)
-                            sbDigest.append(Integer.toHexString((fileCode[i] & 0xFF) | 0x100).substring(1,3));
-                        md5s = sbDigest.toString();
+                        try {
+                            writer.flush();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        System.out.println(ref.toJSON());
+                        System.out.println("+++++++++++++++++++");
                     }
-                    String[] data1 = { projectName,ref.getRefactoringType().getDisplayName(),"",
-                            "https://github.com/"+projectName+"/commit/"+commitId+"#diff-"+md5s + "L"+python_line ,ref.toString(),"https://github.com/"+projectName+"/commit/"+commitId , pythonFile, commitId };
-                    writer.writeNext(data1);
-
-                    try {
-                        writer.flush();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    System.out.println(ref.toJSON());
-                    System.out.println("+++++++++++++++++++");
                 }
-            }
 
-            @Override
-            public boolean skipCommit(String commitId) {
+                @Override
+                public boolean skipCommit(String commitId) {
 
-                if (lists.contains("https://github.com/"+projectName+"/commit/"+commitId)) {
-                    System.out.println("skipped ");
-                    return true;
+                    if (lists.contains("https://github.com/"+projectName+"/commit/"+commitId)) {
+                        System.out.println("skipped ");
+                        return true;
+                    }
+                    if (!commits.contains(commitId)){
+                        System.out.println("skipped ");
+                        return true;
+                    }
+                    return false;
                 }
-                if (!commits.contains(commitId)){
-                    System.out.println("skipped ");
-                    return true;
-                }
-                return false;
-            }
 
 
-        });
+            });
+        }
+        catch (Exception e){
+
+        }
+
     }
 
 

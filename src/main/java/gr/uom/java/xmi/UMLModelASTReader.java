@@ -112,7 +112,7 @@ public class UMLModelASTReader {
 //				CompilationUnit compilationUnit = (CompilationUnit)parser.createAST(null);
 				processCompilationUnit(filePath, compilationUnit, javaFileContent);
 			}
-			catch(Exception e) {
+			catch(Exception | NoClassDefFoundError e) {
 				e.printStackTrace();
 			}
 		}

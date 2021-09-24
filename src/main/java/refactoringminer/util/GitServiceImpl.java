@@ -60,7 +60,7 @@ public class GitServiceImpl implements GitService {
 			//logger.info("Project {} is already cloned, current branch is {}", cloneUrl, repository.getBranch());
 			
 		} else {
-			logger.info("Cloning {} ...", cloneUrl);
+			System.out.println("Cloning {} ..."+ cloneUrl);
 			Git git = Git.cloneRepository()
 					.setDirectory(folder)
 					.setURI(cloneUrl)

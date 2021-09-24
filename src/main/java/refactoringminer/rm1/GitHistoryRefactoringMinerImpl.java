@@ -2,16 +2,10 @@ package  refactoringminer.rm1;
 
 import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.UMLModelASTReader;
+import gr.uom.java.xmi.diff.MoveOperationRefactoring;
 import gr.uom.java.xmi.diff.UMLModelDiff;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.StringWriter;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -139,7 +133,9 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 		try (RevWalk walk = new RevWalk(repository)) {
 			// If no java files changed, there is no refactoring. Also, if there are
 			// only ADD's or only REMOVE's there is no refactoring
+//			long start = System.nanoTime();
 			if (!filePathsBefore.isEmpty() && !filePathsCurrent.isEmpty() && currentCommit.getParentCount() > 0) {
+
 				RevCommit parentCommit = currentCommit.getParent(0);
 				populateFileContents(repository, parentCommit, filePathsBefore, fileContentsBefore, repositoryDirectoriesBefore);
 				UMLModel parentUMLModel = createModel(fileContentsBefore, repositoryDirectoriesBefore,"O",currentCommit.getName(),projectFolder.toString());
@@ -150,10 +146,28 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 				UMLModelDiff modelDiff = parentUMLModel.diff(currentUMLModel, renamedFilesHint);
 				refactoringsAtRevision = modelDiff.getRefactorings();
 				refactoringsAtRevision = filter(refactoringsAtRevision);
+
+
+
 			} else {
 				//logger.info(String.format("Ignored revision %s with no changes in java files", commitId));0
 				refactoringsAtRevision = Collections.emptyList();
 			}
+//			long end  = System.nanoTime();
+//			FileUtils.writeStringToFile(new File("/Users/malinda/Documents/Research_Topic_2/RefactoringMiner_Git/runningtime.txt"), "String to append", true);
+
+//			try
+//			{
+//				String filename= "runningtime.txt";
+//				FileWriter fw = new FileWriter(filename,true); //the true will append the new data
+//				fw.write((end-start)+"\n");//appends the string to the file
+//				fw.close();
+//			}
+//			catch(IOException ioe)
+//			{
+//				System.err.println("IOException: " + ioe.getMessage());
+//			}
+
 			handler.handle(commitId, refactoringsAtRevision);
 			
 			walk.dispose();
@@ -371,10 +385,33 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 		}
 		List<Refactoring> filteredList = new ArrayList<Refactoring>();
 		for (Refactoring ref : refactoringsAtRevision) {
-			if (this.refactoringTypesToConsider.contains(ref.getRefactoringType())) {
+			if (ref.getRefactoringType()==RefactoringType.MOVE_OPERATION){
+				String after_class = ((MoveOperationRefactoring)ref).getMovedOperation().getClassName();
+				String before_class = ((MoveOperationRefactoring)ref).getOriginalOperation().getClassName();
+				String after_package = after_class.substring(0,after_class.lastIndexOf("."));
+				String before_package = before_class.substring(0,before_class.lastIndexOf("."));
+				if (after_class.substring(after_class.lastIndexOf(".")).contains("PyDummyClass")
+				&&
+				before_class.substring(before_class.lastIndexOf(".")).contains("PyDummyClass")
+				){
+					if (!after_package.equals(before_class)){
+						((MoveOperationRefactoring)ref).getMovedOperation().setClassName(after_package);
+						((MoveOperationRefactoring)ref).getOriginalOperation().setClassName(before_package);
+						filteredList.add(ref);
+					}
+				}
+				else{
+					filteredList.add(ref);
+				}
+
+
+			}
+
+			else if (this.refactoringTypesToConsider.contains(ref.getRefactoringType())) {
 				filteredList.add(ref);
 			}
 		}
+
 		return filteredList;
 	}
 	
