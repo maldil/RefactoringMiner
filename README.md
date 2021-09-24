@@ -15,7 +15,7 @@ Table of Contents
 [RefactoringMiner](https://github.com/tsantalis/RefactoringMiner) (developed by Nikolaos Tsantali et al.) is a Java library that can detects refactorings applied in the commit history of a Java project. We extend the RefactoringMiner to Python. Now, you can use *Python-adapted RefactoringMiner* to detect refactorings applied in Python projects.
 
 
-Technically, it should support all the refactoring detected by the original RefacotringMiner (please refer [this](https://github.com/tsantalis/RefactoringMiner#general-info)). However, we manually valiaded only 19 kinds of refacotrings. All the validation results are available in our [website](https://mledits.github.io).
+Technically, it should support all the refactoring detected by the original RefacotringMiner (please refer [this](https://github.com/tsantalis/RefactoringMiner#general-info)). However, we manually valiaded only 19 kinds of refacotrings. All the validation results are available in our [website](https://mlcodepatterns.github.io).
 
 
 # How to use Python-adapted RefactoringMiner as a maven dependency
@@ -26,11 +26,12 @@ In order to use RefactoringMiner as a maven dependency in your project, add the 
 	<dependency>
 	    <groupId>io.github.maldil</groupId>
 	    <artifactId>python-refactoring-miner</artifactId>
-	    <version>1.0.2</version>
+	    <version>1.0.6</version>
 	</dependency>
 
 # How to build Python-adapted RefactoringMiner
-Building Python-adapted RefactoringMiner could be slidly complex due to Eclipse-JDT paser. You have to build the Eclipse-JDT paser ([https://github.com/maldil/PyEclipsJDTParser](https://github.com/maldil/PyEclipsJDTParser)) locally and install it to the local Maven repository before building RefactoringMiner. 
+Building Python-adapted RefactoringMiner could be slidly complex due to Eclipse-JDT paser. You have to build the CustomizedEclipseJDT in [JavaFyPy
+](https://github.com/maldil/JavaFyPy) locally and install it to the local Maven repository before building RefactoringMiner. 
 
 # Research
 ## How to cite RefactoringMiner
