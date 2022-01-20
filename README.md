@@ -34,7 +34,7 @@ Building Python-adapted RefactoringMiner could be slidly complex due to Eclipse-
   * Run `git clone https://github.com/maldil/JavaFyPy.git`
   * Run `cd  CustomizedEclipseJDT`
   * Follow the instructions in the [repository](https://github.com/maldil/JavaFyPy/tree/master/CustomizedEclipseJDT)  to build the project.  
-  * Install the binaries to your local maven repository using mvn install:install-file -Dfile= /You_Path/target/org.eclipse.jdt.core-3.24.0-SNAPSHOT.jar -DgroupId=org.eclipse.jdt -DartifactId=org.eclipse.jdt.core -Dversion=3.24.0-SNAPSHOT -Dpackaging=jar -DgeneratePom=true
+  * Install the binaries to your local maven repository using `mvn install:install-file -Dfile= /You_Path/target/org.eclipse.jdt.core-3.24.0-SNAPSHOT.jar -DgroupId=org.eclipse.jdt -DartifactId=org.eclipse.jdt.core -Dversion=3.24.0-SNAPSHOT -Dpackaging=jar -DgeneratePom=true`
 
 Once you complete installing the above dependencies, run `mvn clean package' to build the project.  
 
