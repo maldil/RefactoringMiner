@@ -50,27 +50,27 @@ In order to use RefactoringMiner as a maven dependency in your project, add the 
 
 # How to use Py-RefactoringMiner as a Docker container
 
-*Step 1*: **Step 1** - This [folder](https://drive.google.com/file/d/1mWy046yjHrywRUf_g_wklwiyGtb5Ggtn/view?usp=sharing) should be downloaded, unzipped, and saved to a directory, let's call the absolute path to the directory is $FOLDER PATH.  
+**Step 1**: This [folder](https://drive.google.com/file/d/1mWy046yjHrywRUf_g_wklwiyGtb5Ggtn/view?usp=sharing) should be downloaded, unzipped, and saved to a directory, let's call the absolute path to the directory is $FOLDER PATH.  
 
 
-*Step 2*:To download the docker images, execute the following command in your terminal - 
+**Step 2**:To download the docker images, execute the following command in your terminal - 
 `docker pull malindadoo1/python_refactoring_miner:r11`. Once the download is completed, run the command `docker images` and make sure that the image `python_refactoring_miner` with tag `r11` is available.
 
-*Step 3*: To start the docker container in interactive mode, execute the following command in your terminal - 
+**Step 3**: To start the docker container in interactive mode, execute the following command in your terminal - 
 `docker run -v $FOLDER_PATH/ArtifactEvaluation:/user/local/rminer/ArtifactEvaluation -it malindadoo1/python_refactoring_miner:r11 /bin/bash`
 You have to update the variable `$FOLDER_PATH` correctly. It should be the absolute path to the parent folder of the downloaded folder. We have to mount it to the docker container. The binaries in Docker containers will use the folder to read and write data related to refactoring inference. Once you execute the above command you will be entered to the docker container. 
 
-*Step 4*- This step is to check whether the container is started correctly.  
+**Step 4**- This step is to check whether the container is started correctly.  
 Execute `python3 test_container.py` 
 If this command prints the message, `You've done an excellent job mounting the folders` appears after running this command, you've successfully finished step 3. You can go to the next step now. If not, make sure the variable `$FOLDER PATH` is set to the absolute path of the download folder's parent folder.
 
 
-*Step 5*- Let’s run the refactoring miner and extract some refactorings. First, use the command `pwd` to check whether your current working folder is `/user/local/rminer`. If not, you should first navigate back to the folder `/user/local/rminer`. Then, execute the following command
+**Step 5**- Let’s run the refactoring miner and extract some refactorings. First, use the command `pwd` to check whether your current working folder is `/user/local/rminer`. If not, you should first navigate back to the folder `/user/local/rminer`. Then, execute the following command
  `java -jar target/python-refactoring-miner-1.0.6.jar -dc` (Ignore the `log4j` warnings.)
 
 The `Jar` file is preconfigured to read the file `$FOLDER PATH/ArtifactEvaluation/RefactoringMiner/repo_data.csv` which has the repository and commit hex of the commit that we want to extract refactorings. If you want to add more projects and hex you can edit the file and add more projects and commit hexes.  However, you must download inferred type information from the [type repository](https://github.com/mlcodepatterns/PythonTypeInformation) and add it to the subdirectory `TYPE_REPO` if you wish to analyze more commits and projects than the ones in `repo data.csv`.
 
-*Step 6*- The step 2.4 extracts all the refactoring information to individual .json files to the folder '$FOLDER PATH/ArtifactEvaluation/RefactoringMiner/Refactoring'. Now we have to gather all this scattered information into one file. To do that, navigate inside the folder /user/local/rminer, execute the following command. 
+**Step 6**- The step 2.4 extracts all the refactoring information to individual .json files to the folder '$FOLDER PATH/ArtifactEvaluation/RefactoringMiner/Refactoring'. Now we have to gather all this scattered information into one file. To do that, navigate inside the folder /user/local/rminer, execute the following command. 
 
 'python3 conver_to_csv.py ./ArtifactEvaluation/RefactoringMiner/Refactoring/'
 
@@ -80,7 +80,7 @@ This will generate the file `$FOLDER_PATH/ArtifactEvaluation/RefactoringMiner/Re
 The file `refactoring.csv` contains a summary of all the refactoring of the commits specified in the file `/ArtifactEvaluation/RefactoringMiner/repo_data.csv`. 
 This file described only a little information. Additional informations are available in the .json files in the subdirectories of  `$FOLDER_PATH/ArtifactEvaluation/RefactoringMiner/Refactoring`
 
-*Step 3.6* - Execute exit to terminate the container. 
+**Step 3.6** - Execute exit to terminate the container. 
 
 
 # Research
