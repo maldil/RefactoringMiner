@@ -84,7 +84,7 @@ This file described only a little information. Additional informations are avail
 
 
 # Research
-## How to cite RefactoringMiner
+## How to cite Py-RefactoringMiner
 
 If you are using RefactoringMiner in your research, please cite the following papers:
 
