@@ -106,26 +106,7 @@ Malinda Dilhara, Ameya Ketkar, Nikhith Sannidhi, and Danny Dig, [Discovering Rep
 	address = {New York, NY, USA},
     }
 
-Malinda Dilhara [Discovering Repetitive Code Changes in ML Systems](https://dl.acm.org/doi/abs/10.1145/3468264.3473493)
-ESEC/FSE 2021: Proceedings of the 29th ACM Joint Meeting on European Software Engineering Conference and Symposium on the Foundations of Software Engineering August 2021 Pages 1683–
 
-	@inproceedings{Dilhara:FSE:2021:RepetitiveChanges,
-	author = {Dilhara, Malinda},
-	title = {Discovering Repetitive Code Changes in ML Systems},
-	year = {2021},
-	isbn = {9781450385626},
-	publisher = {Association for Computing Machinery},
-	address = {New York, NY, USA},
-	url = {https://doi.org/10.1145/3468264.3473493},
-	doi = {10.1145/3468264.3473493},
-	booktitle = {Proceedings of the 29th ACM Joint Meeting on European Software Engineering Conference and Symposium on the Foundations of Software Engineering},
-	pages = {1683–1685},
-	numpages = {3},
-	keywords = {Code change patterns, Machine learning, Empirical analysis},
-	location = {Athens, Greece},
-	series = {ESEC/FSE 2021}
-	}
-	
 Do not foget to cite Java RefactoringMiner as well. 
 
 Nikolaos Tsantalis, Matin Mansouri, Laleh Eshkevari, Davood Mazinanian, and Danny Dig, "[Accurate and Efficient Refactoring Detection in Commit History](https://users.encs.concordia.ca/~nikolaos/publications/ICSE_2018.pdf)," *40th International Conference on Software Engineering* (ICSE 2018), Gothenburg, Sweden, May 27 - June 3, 2018.
