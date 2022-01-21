@@ -1,5 +1,6 @@
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.maldil/python-refactoring-miner/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.maldil/python-refactoring-miner)
+[![DOI](https://zenodo.org/badge/347796887.svg)](https://zenodo.org/badge/latestdoi/347796887)
 
 
 Table of Contents
