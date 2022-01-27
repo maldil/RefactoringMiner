@@ -55,10 +55,10 @@ In order to use RefactoringMiner as a maven dependency in your project, add the 
 
 
 **Step 2**:To download the docker images, execute the following command in your terminal - 
-`docker pull malindadoo1/python_refactoring_miner:r11`. Once the download is completed, run the command `docker images` and make sure that the image `python_refactoring_miner` with tag `r11` is available.
+`docker pull malindadoo1/python_refactoring_miner:r13`. Once the download is completed, run the command `docker images` and make sure that the image `python_refactoring_miner` with tag `r13` is available.
 
 **Step 3**: To start the docker container in interactive mode, execute the following command in your terminal - 
-`docker run -v $FOLDER_PATH/ArtifactEvaluation:/user/local/rminer/ArtifactEvaluation -it malindadoo1/python_refactoring_miner:r11 /bin/bash`
+`docker run -v $FOLDER_PATH/ArtifactEvaluation:/user/local/rminer/ArtifactEvaluation -it malindadoo1/python_refactoring_miner:r13 /bin/bash`
 You have to update the variable `$FOLDER_PATH` correctly. It should be the absolute path to the parent folder of the downloaded folder. We have to mount it to the docker container. The binaries in Docker containers will use the folder to read and write data related to refactoring inference. Once you execute the above command you will be entered to the docker container. 
 
 **Step 4**- This step is to check whether the container is started correctly.  
