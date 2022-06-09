@@ -119,6 +119,12 @@
             <artifactId>vavr</artifactId>
             <version>0.10.3</version>
         </dependency>
+             <!-- https://mvnrepository.com/artifact/org.antlr/antlr-runtime -->
+        <dependency>
+                  <groupId>org.antlr</groupId>
+                  <artifactId>antlr-runtime</artifactId>
+                  <version>3.5.2</version>
+        </dependency>
         <dependency>
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
