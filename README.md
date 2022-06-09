@@ -23,7 +23,7 @@ Table of Contents
 Technically, it should support all the refactoring detected by the original RefacotringMiner (please refer [this](https://github.com/tsantalis/RefactoringMiner#general-info)). However, we manually valiaded only 19 kinds of refacotrings. All the validation results are available in our [website](https://mlcodepatterns.github.io).
 
 # How to build Py-RefactoringMiner
-To have build RefactoringMiner, you first need to build two dependencies, i.e., 1) [EclipseJDT](https://github.com/maldil/JavaFyPy/tree/master/CustomizedEclipseJDT) and, 2) [JPyParser](https://github.com/maldil/JPythonParser), locally and install them to your local repository.
+To have build RefactoringMiner, you first need to build two dependencies, i.e., 1) [EclipseJDT](https://github.com/maldil/JavaFyPy/tree/master/CustomizedEclipseJDT) and, 2) [JPyParser](https://github.com/maldil/JPythonParser), locally and install them to your local maven repository.
 Building Python-adapted RefactoringMiner could be slidly complex due to Eclipse-JDT paser. 
 
 * [JPyParser](https://github.com/maldil/JPythonParser) 
